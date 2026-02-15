@@ -6,7 +6,7 @@ from .api.frames import (
     FrameGetAllNodesInformationNotification,
     FrameGetNodeInformationNotification)
 from .const import NodeType, NodeTypeWithSubtype
-from .lightening_device import Light
+from .dimmable_device import ExteriorHeating, Light, OnOffLight
 from .log import PYVLXLOG
 from .node import Node
 from .on_off_switch import OnOffSwitch
@@ -44,6 +44,8 @@ def convert_frame_to_node(pyvlx: "PyVLX",
             return GarageDoor(pyvlx, frame.node_id, frame.name, frame.serial_number, frame.current_position)
 
         case NodeType.LIGHT:  # 6
+            if frame.node_type == NodeTypeWithSubtype.LIGHT_ON_OFF :
+                return OnOffLight(pyvlx, frame.node_id, frame.name, frame.serial_number)
             return Light(pyvlx, frame.node_id, frame.name, frame.serial_number)
 
         case NodeType.GATE_OPENER:  # 7
@@ -57,6 +59,9 @@ def convert_frame_to_node(pyvlx: "PyVLX",
 
         case NodeType.ON_OFF_SWITCH:  # 15
             return OnOffSwitch(pyvlx, frame.node_id, frame.name, frame.serial_number)
+
+        case NodeType.EXTERIOR_HEATING:  # 21
+            return ExteriorHeating(pyvlx, frame.node_id, frame.name, frame.serial_number)
 
         case NodeType.BLADE_OPENER:  # 29
             return Blade(pyvlx, frame.node_id, frame.name, frame.serial_number, frame.current_position)
